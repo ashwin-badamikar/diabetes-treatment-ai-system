@@ -370,7 +370,7 @@ This project demonstrates:
 ## 📞 Contact
 
 **Developer**: Ashwin Badamikar  
-**Course**: Prompt Engineering and GenAI 
+**Course**: Prompt Engineering and GenAI  
 **GitHub**: https://github.com/ashwin-badamikar  
 **Repository**: https://github.com/ashwin-badamikar/diabetes-treatment-ai-system  
 
