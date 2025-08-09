@@ -1,0 +1,10 @@
+{
+    "python.defaultInterpreterPath": "./diabetes_env/Scripts/python.exe",
+    "python.terminal.activateEnvironment": true,
+    "jupyter.notebookFileRoot": "${workspaceFolder}",
+    "python.formatting.provider": "black",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000
+}

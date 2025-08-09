@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Treatment AI System</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 1400px; margin: 0 auto; padding: 20px; background: #f5f7fa; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 20px; text-align: center; margin-bottom: 30px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .header h1 { margin: 0; font-size: 2.8em; font-weight: 700; }
+        .header p { margin: 10px 0 0 0; font-size: 1.2em; opacity: 0.9; }
+        
+        .main-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        
+        /* Patient Form Styles */
+        .form-container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .form-container h2 { color: #333; border-bottom: 3px solid #667eea; padding-bottom: 10px; }
+        .form-group { margin: 20px 0; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; color: #555; font-size: 14px; }
+        .form-group input { width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; box-sizing: border-box; transition: border-color 0.3s; }
+        .form-group input:focus { border-color: #667eea; outline: none; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        
+        .submit-btn { width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 18px; border: none; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer; margin-top: 25px; transition: all 0.3s; }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3); }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        
+        /* Recommendations Styles */
+        .recommendations { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); margin-top: 20px; }
+        .recommendations h2 { color: #333; border-bottom: 3px solid #4caf50; padding-bottom: 10px; }
+        .algorithm-card { padding: 25px; margin: 20px 0; border-radius: 15px; border-left: 6px solid; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .dqn-card { background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border-left-color: #1976d2; }
+        .pg-card { background: linear-gradient(135deg, #fce4ec 0%, #f1f8e9 100%); border-left-color: #c2185b; }
+        .algorithm-card h3 { margin: 0 0 15px 0; font-size: 18px; font-weight: 700; }
+        .treatment { font-size: 20px; font-weight: 600; color: #333; margin: 12px 0; }
+        .confidence { font-size: 16px; color: #666; font-weight: 500; }
+        
+        /* Chatbot Styles */
+        .chatbot-section { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+        .chatbot-section h2 { color: #333; border-bottom: 3px solid #4caf50; padding-bottom: 10px; }
+        .chat-container { height: 450px; overflow-y: auto; border: 2px solid #e1e5e9; padding: 20px; border-radius: 15px; margin-bottom: 20px; background: #fafbfc; }
+        .chat-message { margin: 15px 0; padding: 15px; border-radius: 12px; max-width: 85%; word-wrap: break-word; }
+        .user-message { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-left: auto; text-align: right; }
+        .ai-message { background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); color: white; margin-right: auto; text-align: left; }
+        .chat-input-group { display: flex; gap: 15px; }
+        .chat-input { flex: 1; padding: 15px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; transition: border-color 0.3s; }
+        .chat-input:focus { border-color: #4caf50; outline: none; box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1); }
+        .chat-btn { background: #4caf50; color: white; padding: 15px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 16px; transition: all 0.3s; }
+        .chat-btn:hover { background: #45a049; transform: translateY(-1px); }
+        .chat-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        
+        .system-info { text-align: center; margin-top: 25px; padding: 20px; background: #f8f9fa; border-radius: 12px; border: 1px solid #e9ecef; }
+        .system-info p { margin: 5px 0; font-size: 14px; color: #666; }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .main-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏥 Diabetes Treatment AI System</h1>
+        <p>Advanced AI with Deep Q-Network & Policy Gradient + Medical Assistant</p>
+    </div>
+    
+    <div class="main-container">
+        <!-- Left Column: Patient Form and Recommendations -->
+        <div>
+            <div class="form-container">
+                <h2>📋 Patient Medical Information</h2>
+                <form id="patientForm">
+                    <div class="form-group">
+                        <label>Glucose Level (mg/dL):</label>
+                        <input type="number" id="glucose" placeholder="Normal: 70-100, Diabetes: >126" required>
+                    </div>
+                    <div class="form-group">
+                        <label>BMI (Body Mass Index):</label>
+                        <input type="number" step="0.1" id="bmi" placeholder="Normal: 18.5-24.9, Overweight: 25-29.9" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Age (years):</label>
+                        <input type="number" id="age" placeholder="Enter patient age" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Blood Pressure (systolic):</label>
+                        <input type="number" id="blood_pressure" placeholder="Normal: <120, High: >140" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Pregnancies:</label>
+                        <input type="number" id="pregnancies" placeholder="0 for males, actual count for females" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Diabetes Pedigree Function:</label>
+                        <input type="number" step="0.01" id="diabetes_pedigree" placeholder="Family history factor (0.0-2.0)" value="0.5">
+                    </div>
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        🤖 Get AI Treatment Recommendation
+                    </button>
+                </form>
+            </div>
+            
+            <div id="recommendations" style="display: none;" class="recommendations">
+                <h2>🧠 AI Treatment Recommendations</h2>
+                <div id="results"></div>
+                <div class="system-info">
+                    <p>📊 <strong>Trained on 883,825 real patients</strong> from CDC BRFSS dataset</p>
+                    <p>🧠 <strong>5.4M+ neural network parameters</strong> across two RL algorithms</p>
+                    <p>⚡ <strong>Real-time clinical decision support</strong> with confidence scoring</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Medical AI Chatbot -->
+        <div class="chatbot-section">
+            <h2>🤖 Medical AI Assistant</h2>
+            <div class="chat-container" id="chatContainer">
+                <div class="chat-message ai-message">
+                    <strong>🩺 AI Medical Assistant:</strong> Hello! I'm your AI medical assistant, powered by advanced language models. I can help explain diabetes treatments, answer questions about your AI recommendations, and provide general diabetes care guidance. What would you like to know?
+                </div>
+            </div>
+            
+            <div class="chat-input-group">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Ask about diabetes, treatments, or your recommendations..." />
+                <button onclick="sendChatMessage()" class="chat-btn" id="chatBtn">Send</button>
+            </div>
+            
+            <div style="margin-top: 15px; padding: 15px; background: #f0f8f0; border-radius: 10px; font-size: 14px; color: #2e7d32;">
+                <strong>💡 Try asking:</strong> "What does my glucose level mean?" • "Explain my treatment options" • "Side effects of Metformin?" • "How to improve diabetes management?"
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentPatientData = null;
+        
+        // Handle treatment recommendation form
+        document.getElementById('patientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '🔄 AI Processing...';
+            
+            currentPatientData = {
+                glucose: parseFloat(document.getElementById('glucose').value),
+                bmi: parseFloat(document.getElementById('bmi').value),
+                age: parseInt(document.getElementById('age').value),
+                blood_pressure: parseFloat(document.getElementById('blood_pressure').value),
+                pregnancies: parseInt(document.getElementById('pregnancies').value) || 0,
+                diabetes_pedigree: parseFloat(document.getElementById('diabetes_pedigree').value) || 0.5
+            };
+            
+            try {
+                const response = await fetch('http://localhost:8000/recommend_treatment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(currentPatientData)
+                });
+                
+                const result = await response.json();
+                
+                document.getElementById('results').innerHTML = `
+                    <div class="algorithm-card dqn-card">
+                        <h3>🎯 Deep Q-Network (DQN)</h3>
+                        <p class="treatment">${result.recommendations.dqn.treatment}</p>
+                        <p class="confidence">Confidence: ${(result.recommendations.dqn.confidence * 100).toFixed(1)}%</p>
+                        <small style="color: #666;">Trained on 1,000 episodes • 5.4M parameters</small>
+                    </div>
+                    <div class="algorithm-card pg-card">
+                        <h3>🎲 Policy Gradient (REINFORCE)</h3>
+                        <p class="treatment">${result.recommendations.policy_gradient.treatment}</p>
+                        <p class="confidence">Confidence: ${(result.recommendations.policy_gradient.confidence * 100).toFixed(1)}%</p>
+                        <small style="color: #666;">Trained on 500 episodes • 347K parameters</small>
+                    </div>
+                `;
+                
+                document.getElementById('recommendations').style.display = 'block';
+                
+                // Add recommendation context to chat
+                const recommendationContext = `I just received my AI treatment recommendations: DQN suggests "${result.recommendations.dqn.treatment}" and Policy Gradient suggests "${result.recommendations.policy_gradient.treatment}". Can you explain these recommendations?`;
+                addChatMessage("I've analyzed your patient data and received AI treatment recommendations! Feel free to ask me about these treatments.", 'ai');
+                
+            } catch (error) {
+                alert('Error connecting to AI system: ' + error.message);
+                console.error('API Error:', error);
+            }
+            
+            submitBtn.disabled = false;
+            submitBtn.textContent = '🤖 Get AI Treatment Recommendation';
+        });
+        
+        // Enhanced chatbot functionality
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            const chatBtn = document.getElementById('chatBtn');
+            chatBtn.disabled = true;
+            chatBtn.textContent = 'Thinking...';
+            
+            // Add user message to chat
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            // Add typing indicator
+            const typingDiv = addChatMessage('🤔 AI Doctor is thinking...', 'ai-typing');
+            
+            try {
+                const response = await fetch('http://localhost:8000/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: message,
+                        patient_context: currentPatientData
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Remove typing indicator
+                typingDiv.remove();
+                
+                // Add AI response
+                addChatMessage(result.response, 'ai');
+                
+            } catch (error) {
+                // Remove typing indicator
+                typingDiv.remove();
+                addChatMessage('🔧 Sorry, I\'m having trouble connecting to the medical AI right now. Please check that your Groq API key is configured correctly, or try again later.', 'ai');
+                console.error('Chat Error:', error);
+            }
+            
+            chatBtn.disabled = false;
+            chatBtn.textContent = 'Send';
+        }
+        
+        function addChatMessage(message, sender) {
+            const container = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}-message`;
+            
+            if (sender === 'user') {
+                messageDiv.innerHTML = `<strong>👤 You:</strong> ${message}`;
+            } else if (sender === 'ai-typing') {
+                messageDiv.innerHTML = message;
+                messageDiv.style.fontStyle = 'italic';
+                messageDiv.style.opacity = '0.7';
+            } else {
+                messageDiv.innerHTML = `<strong>🩺 AI Doctor:</strong> ${message}`;
+            }
+            
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+            
+            return messageDiv;
+        }
+        
+        // Allow Enter key to send messages
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+        
+        // Quick question buttons
+        function addQuickQuestions() {
+            setTimeout(() => {
+                const quickQuestions = [
+                    "What's the difference between DQN and Policy Gradient?",
+                    "How reliable are these AI recommendations?",
+                    "What should I know about diabetes management?",
+                    "Explain the confidence scores"
+                ];
+                
+                const questionsHtml = quickQuestions.map(q => 
+                    `<button onclick="askQuickQuestion('${q}')" style="margin: 5px; padding: 8px 12px; background: #e8f5e8; border: 1px solid #4caf50; border-radius: 20px; cursor: pointer; font-size: 12px;">${q}</button>`
+                ).join('');
+                
+                addChatMessage(`Quick questions you can ask:<br>${questionsHtml}`, 'ai');
+            }, 3000);
+        }
+        
+        function askQuickQuestion(question) {
+            document.getElementById('chatInput').value = question;
+            sendChatMessage();
+        }
+        
+        // Initialize quick questions
+        addQuickQuestions();
+        
+        // Auto-scroll chat to bottom
+        function scrollChatToBottom() {
+            const container = document.getElementById('chatContainer');
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // Test API connection on load
+        async function testAPIConnection() {
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                const result = await response.json();
+                
+                if (result.chatbot_available) {
+                    addChatMessage('✅ All systems ready! Both treatment algorithms and medical chatbot are online and ready to assist you.', 'ai');
+                } else {
+                    addChatMessage('⚠️ Treatment recommendations are ready, but chatbot requires Groq API key configuration. You can still get AI treatment recommendations!', 'ai');
+                }
+            } catch (error) {
+                addChatMessage('🔧 Having trouble connecting to the AI system. Please ensure the API is running on port 8000.', 'ai');
+            }
+        }
+        
+        // Test connection when page loads
+        window.addEventListener('load', () => {
+            setTimeout(testAPIConnection, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+# Python environment
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+diabetes_env/
+venv/
+env/
+*.egg-info/
+
+# Large data files (too big for GitHub)
+*.csv
+*.zip
+*.XPT
+*.pkl
+data/BRFSS_*.zip
+data/LLCP*.csv
+data/LLCP*.XPT
+data/massive_*.csv
+data/massive_*.pkl
+data/NHANES_*.XPT
+
+# Model checkpoints (large files)
+*.pt
+models/*.pt
+data/fast_checkpoint_*.pt
+data/pg_checkpoint_*.pt
+
+# Environment variables (contains API keys)
+.env
+
+# IDE files
+.vscode/
+*.swp
+*.swo
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Results that can be regenerated
+results/*.png
+results/*.pdf
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+
+# Node modules (if React is added later)
+node_modules/
+package-lock.json
+
+# Build artifacts
+build/
+dist/
+*.egg-info/

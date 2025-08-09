@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Young Pre-diabetic",
+    "data": {
+      "glucose": 115,
+      "bmi": 28,
+      "age": 32,
+      "blood_pressure": 75
+    },
+    "expected": "Conservative treatment approach"
+  },
+  {
+    "name": "Elderly Diabetic",
+    "data": {
+      "glucose": 165,
+      "bmi": 29,
+      "age": 68,
+      "blood_pressure": 85
+    },
+    "expected": "Moderate medication therapy"
+  },
+  {
+    "name": "Severe Diabetic",
+    "data": {
+      "glucose": 220,
+      "bmi": 38,
+      "age": 45,
+      "blood_pressure": 90
+    },
+    "expected": "Intensive treatment required"
+  },
+  {
+    "name": "Healthy Individual",
+    "data": {
+      "glucose": 95,
+      "bmi": 24,
+      "age": 28,
+      "blood_pressure": 70
+    },
+    "expected": "Lifestyle recommendations only"
+  }
+]
