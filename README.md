@@ -11,6 +11,8 @@
 
 This project implements a **sophisticated agentic AI system** for diabetes treatment recommendations using **two advanced reinforcement learning algorithms** trained on **883,825 real patients** from the CDC BRFSS dataset. The system provides personalized treatment recommendations through intelligent agent coordination.
 
+## Assignment Showcase: https://diabete-agent-ai.netlify.app/
+
 ### 🏆 Key Achievements
 - **🤖 Dual RL Implementation**: DQN (5.4M params) + REINFORCE (347K params)
 - **📊 Massive Real Dataset**: 883,825 real patients from CDC BRFSS
